@@ -1,0 +1,7 @@
+{
+  "name": "smrithi-26",
+  "private": true,
+  "devDependencies": {
+    "wrangler": "^4.45.0"
+  }
+}
