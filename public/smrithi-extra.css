@@ -1,0 +1,190 @@
+/* Extra sections: clubs, tribute, documents, directions, sponsors wall,
+   fixture map, registration & prizes, organising committee. */
+
+.club-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.club-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+}
+
+.club-item img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.schedule-day-highlight {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--accent-gold);
+  letter-spacing: 0.3px;
+}
+
+.directions {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.direction-row {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent-gold);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.direction-row span {
+  opacity: 0.75;
+}
+
+.doc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+#tributeCard p,
+#aboutHostBody p {
+  margin: 0 0 10px;
+  line-height: 1.65;
+}
+
+.sponsor-wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 18px;
+  padding: 24px;
+}
+
+.sponsor-wall-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sponsor-wall-item img {
+  max-width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.bracket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+}
+
+.bracket-card {
+  padding: 22px;
+}
+
+.bracket-rounds {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.bracket-round-label {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 8px;
+}
+
+.bracket-match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.bracket-match strong,
+.bracket-match em {
+  color: var(--accent-gold);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.reg-grid,
+.committee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.reg-card,
+.committee-card {
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.reg-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reg-row span {
+  opacity: 0.7;
+}
+
+.reg-card .btn {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.committee-role {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+
+.committee-card strong {
+  font-size: 18px;
+}
+
+.committee-phone {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.committee-card .mini-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

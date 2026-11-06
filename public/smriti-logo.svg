@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="SMRITHI">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4D778"/>
+      <stop offset="1" stop-color="#B07E28"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="92" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <circle cx="100" cy="100" r="79" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.5"/>
+  <text x="100" y="106" text-anchor="middle" font-family="Outfit, Inter, Arial, sans-serif" font-size="76" font-weight="800" fill="url(#gold)">S</text>
+  <text x="100" y="146" text-anchor="middle" font-family="Outfit, Inter, Arial, sans-serif" font-size="14" letter-spacing="4" fill="url(#gold)" opacity="0.9">SMRITHI</text>
+</svg>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMRITHI 2026 | Intercollegiate Sports Fest</title>
+    <meta name="description" content="SMRITHI 2026 — an intercollegiate sports fest in Kottayam, Kerala. Live leaderboard, fixtures, results and gallery.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/smrithi-extra.css">
+</head>
+<body class="dark-theme">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text" data-goto="home" id="brandLogoWrap" style="cursor: pointer; justify-content: center; width: 100%;">
+                <img src="/smriti-logo.svg" alt="Fest logo" class="main-logo" id="brandLogo" style="width: 70px; height: 70px; border: none; box-shadow: none; border-radius: 0; filter: drop-shadow(0 0 10px rgba(212,168,67,0.3));">
+            </div>
+            <button class="close-menu" id="closeMenu">&times;</button>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-item active" data-target="home">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+                <span>Home</span>
+            </a></li>
+            <li><a href="#schedule" class="nav-item" data-target="schedule">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v12z"/></svg></span>
+                <span>Events</span>
+            </a></li>
+            <li><a href="#bracket" class="nav-item" data-target="bracket">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 5h6v4H3V5zm0 10h6v4H3v-4zM15 3h6v4h-6V3zm0 10h6v4h-6v-4zM9 7h3v10H9v-2h1v-6H9V7zm6 0h-1V5h1v2zm0 10h-1v-2h1v2z"/></svg></span>
+                <span>Fixture Map</span>
+            </a></li>
+            <li><a href="#teams" class="nav-item" data-target="teams">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-7c-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5z"/></svg></span>
+                <span>Venue Map</span>
+            </a></li>
+            <li><a href="#leaderboard" class="nav-item" data-target="leaderboard">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2V9h2v8zm4 0h-2V7h2v10zm-8 0H4v-4h2v4z"/></svg></span>
+                <span>Leaderboard</span>
+            </a></li>
+            <li><a href="#results" class="nav-item" data-target="results">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg></span>
+                <span>Results</span>
+            </a></li>
+            <li><a href="#gallery" class="nav-item" data-target="gallery">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></span>
+                <span>Gallery</span>
+            </a></li>
+            <li><a href="#registration" class="nav-item" data-target="registration">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg></span>
+                <span>Registration</span>
+            </a></li>
+            <li><a href="#committee" class="nav-item" data-target="committee">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+                <span>Committee</span>
+            </a></li>
+            <li><a href="#sponsors" class="nav-item" data-target="sponsors">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+                <span>Sponsors</span>
+            </a></li>
+            <li><a href="#about" class="nav-item" data-target="about">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></span>
+                <span>About Us</span>
+            </a></li>
+            <li><a class="nav-item" href="/admin">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+                <span>Admin Panel</span>
+            </a></li>
+        </ul>
+        <div class="theme-toggle-container">
+            <button id="themeToggle" class="theme-toggle">
+                <span class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></span>
+                <span>Theme</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="mobile-header">
+            <div class="logo-text-small" data-goto="home" style="cursor: pointer; font-size: 24px;">
+                <span id="mobileBrandName">SMRITHI</span><span id="mobileBrandVersion">2026</span>
+            </div>
+            <button class="hamburger" id="hamburger">&#9776;</button>
+        </header>
+
+        <section id="home" class="page-section active">
+            <div id="liveBannerContainer" style="display: none; margin-bottom: 30px;">
+                <div class="live-banner glass-panel">
+                    <div class="live-indicator">
+                        <span class="live-dot"></span>
+                        <span id="liveBannerLabel">LIVE NOW</span>
+                    </div>
+                    <div class="banner-track-container">
+                        <div class="banner-track" id="liveBannerTrack"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div id="heroImageContainer" style="display:none; margin-bottom: 30px;">
+                        <img id="heroImage" src="" alt="Fest photo" style="max-width: 100%; max-height: 300px; border-radius: 20px; object-fit: cover; cursor: pointer; box-shadow: 0 10px 40px rgba(0,0,0,0.4);">
+                    </div>
+                    <h1 class="hero-title" id="heroTitle">INTERCOLLEGIATE SPORTS FEST</h1>
+                    <h2 class="hero-subtitle" id="heroSubtitle">KOTTAYAM, KERALA</h2>
+
+                    <div class="date-list" id="heroDates"></div>
+
+                    <p class="hero-location" id="heroLocation">Main Campus Ground, Kottayam</p>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" data-goto="leaderboard" id="heroPrimary">View Leaderboard</button>
+                        <a href="#" target="_blank" rel="noopener" class="btn btn-secondary" id="heroRuleBook">Rule Book</a>
+                        <a href="#" target="_blank" rel="noopener" class="btn btn-secondary" id="heroBrochure" style="display:none;">Brochure</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sponsor-carousel-container section-padding" id="homeSponsors" style="display:none;">
+                <h2 class="carousel-title">OFFICIAL SPONSORS</h2>
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" data-sponsor-track></div>
+                </div>
+            </div>
+
+            <div class="home-info-grid section-padding">
+                <div class="info-card map-card" id="mapCard" style="display:none;">
+                    <h3 class="card-title">LOCATION MAP</h3>
+                    <div class="map-container glass-panel" id="mapFrameWrap">
+                        <iframe id="mapFrame" src="" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Venue location map"></iframe>
+                    </div>
+                    <a href="#" target="_blank" rel="noopener" class="btn-link" id="mapLink">View on Google Maps</a>
+                    <div class="directions" id="directionsList"></div>
+                </div>
+
+                <div class="info-card blueprint-card" id="homeBlueprintCard" style="display:none;">
+                    <div class="glass-panel" style="padding: 10px; border-radius: 20px; overflow: hidden;">
+                        <img id="homeBlueprint" alt="Event blueprint" style="width: 100%; border-radius: 12px; display: block; cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="leaderboard" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">SPORTS FEST LEADERBOARD</h2>
+                    <p class="section-subtitle">COLLEGIATE CHAMPIONSHIPS</p>
+                </div>
+                <div class="refresh-indicator">
+                    <span id="lastUpdated">Updating...</span>
+                    <div class="refresh-spinner" id="refreshSpinner"></div>
+                </div>
+            </div>
+
+            <div class="leaderboard-container glass-panel">
+                <div class="table-responsive">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <tr class="loading-row"><td colspan="3">Loading live data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="points-note" id="pointsNote"></p>
+            </div>
+
+            <div class="sponsor-carousel-container section-padding" id="boardSponsors" style="display:none; margin-top: 40px;">
+                <h2 class="carousel-title">OFFICIAL SPONSORS</h2>
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" data-sponsor-track></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="schedule" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">EVENTS</h2>
+                    <p class="section-subtitle">Track upcoming and finished fixtures</p>
+                </div>
+            </div>
+            <div class="schedule-grid" id="scheduleGrid">
+                <div class="glass-panel placeholder-panel"><p>Loading events...</p></div>
+            </div>
+        </section>
+
+        <section id="teams" class="page-section">
+            <div class="section-header">
+                <h2 class="section-title">VENUE MAP</h2>
+                <p class="section-subtitle">TOURNAMENT BLUEPRINT</p>
+            </div>
+            <div class="glass-panel" id="venueBlueprintCard" style="padding: 20px; border-radius: 20px; overflow: hidden;">
+                <img id="venueBlueprint" alt="Venue blueprint" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: block; cursor: pointer;">
+            </div>
+        </section>
+
+        <section id="results" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">EVENT RESULTS</h2>
+                    <p class="section-subtitle">Finished events and winners</p>
+                </div>
+            </div>
+            <div class="results-grid" id="resultsGrid">
+                <div class="glass-panel placeholder-panel"><p>Loading results...</p></div>
+            </div>
+        </section>
+
+        <section id="gallery" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">GALLERY</h2>
+                    <p class="section-subtitle">MOMENTS FROM THE FEST</p>
+                </div>
+                <div class="gallery-filters" id="galleryFilters"></div>
+            </div>
+            <div id="publicGalleryGrid"></div>
+        </section>
+
+        <section id="about" class="page-section">
+            <div class="section-header">
+                <h2 class="section-title" id="aboutSectionTitle">ABOUT US</h2>
+                <p class="section-subtitle" id="aboutSectionSubtitle">Intercollegiate Sports Fest</p>
+            </div>
+            <div class="club-strip" id="clubStrip" style="display:none;"></div>
+            <div class="glass-panel about-content">
+                <div class="about-shell">
+                    <div class="about-hero-card">
+                        <span class="about-kicker" id="aboutKicker">Flagship Sporting Platform</span>
+                        <h3 id="aboutHeading">Built to celebrate talent, discipline, and campus spirit.</h3>
+                        <p id="aboutIntro"></p>
+                        <div class="about-stat-grid" id="aboutStats"></div>
+                    </div>
+
+                    <div class="about-feature-grid">
+                        <div class="about-copy-card">
+                            <span class="about-kicker" id="aboutHostKicker">About TMC</span>
+                            <h3 id="aboutHostTitle"></h3>
+                            <div id="aboutHostBody"></div>
+                        </div>
+
+                        <div class="about-list-card">
+                            <span class="about-kicker" id="aboutHighlightsTitle">Campus Highlights</span>
+                            <ul class="about-feature-list" id="aboutHighlights"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-feature-grid">
+                    <div class="about-copy-card" id="tributeCard" style="display:none;">
+                        <span class="about-kicker" id="tributeKicker">In remembrance</span>
+                        <h3 id="tributeTitle"></h3>
+                        <div id="tributeText"></div>
+                    </div>
+                    <div class="about-list-card" id="documentsCard" style="display:none;">
+                        <span class="about-kicker">Downloads</span>
+                        <div class="doc-links" id="documentLinks"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sponsors" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">SPONSORS</h2>
+                    <p class="section-subtitle">The partners behind SMRITHI</p>
+                </div>
+            </div>
+            <div class="sponsor-wall glass-panel" id="sponsorWall"></div>
+        </section>
+
+        <section id="bracket" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">FIXTURE MAP</h2>
+                    <p class="section-subtitle">Every round, up to the final</p>
+                </div>
+            </div>
+            <div class="bracket-grid" id="bracketGrid"></div>
+        </section>
+
+        <section id="registration" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">REGISTRATION &amp; PRIZES</h2>
+                    <p class="section-subtitle">Entry fee and prize pool for each game</p>
+                </div>
+            </div>
+            <div class="reg-grid" id="registrationGrid"></div>
+        </section>
+
+        <section id="committee" class="page-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">ORGANISING COMMITTEE</h2>
+                    <p class="section-subtitle">Reach the people running the fest</p>
+                </div>
+            </div>
+            <div class="committee-grid" id="committeeGrid"></div>
+        </section>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <h2><span id="footerBrand">SMRITHI</span><span id="footerBrandVersion">2026</span></h2>
+                        <p id="footerTagline">Intercollegiate Sports Fest 2026</p>
+                    </div>
+                    <div class="social-links" id="socialLinks"></div>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <div class="footer-contact-grid" id="footerContacts"></div>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home" data-goto="home">Home</a></li>
+                        <li><a href="#teams" data-goto="teams">Venue Map</a></li>
+                        <li><a href="#about" data-goto="about">About Us</a></li>
+                        <li><a href="#schedule" data-goto="schedule">Events</a></li>
+                        <li><a href="#leaderboard" data-goto="leaderboard">Leaderboard</a></li>
+                        <li><a href="#results" data-goto="results">Results</a></li>
+                        <li><a href="/admin">Admin Panel</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p id="footerCopyright">&copy; 2026 SMRITHI. All rights reserved.</p>
+                <p class="footer-credits" id="footerCredits"></p>
+            </div>
+        </footer>
+    </main>
+
+    <div id="imageLightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:999999; background:rgba(0,0,0,0.95); justify-content:center; align-items:center;">
+        <button id="lightboxClose" aria-label="Close image" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.15); border:none; color:white; font-size:36px; cursor:pointer; width:56px; height:56px; border-radius:50%; z-index:1000000;">&times;</button>
+        <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; padding:20px;">
+            <img id="lightboxImg" src="" alt="" style="max-width:95%; max-height:95%; object-fit:contain; border-radius:10px; box-shadow:0 0 60px rgba(0,0,0,0.6);">
+        </div>
+    </div>
+
+    <script src="/app.js" defer></script>
+</body>
+</html>

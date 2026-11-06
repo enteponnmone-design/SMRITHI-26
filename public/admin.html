@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard | SMRITHI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="dark-theme">
+    <div class="login-overlay" id="loginOverlay">
+        <form class="login-card" id="loginForm" autocomplete="on">
+            <img src="/smriti-logo.svg" alt="" class="login-logo">
+            <p class="login-kicker">SMRITHI CONTROL ROOM</p>
+            <h1>ADMIN LOGIN</h1>
+            <p class="login-hint">Enter the admin password to manage teams, fixtures, results, gallery and site content.</p>
+            <label class="field">
+                <span>Password</span>
+                <input type="password" id="adminPassword" name="password" placeholder="Enter master password" autocomplete="current-password" required>
+            </label>
+            <p class="login-error" id="loginError" role="alert"></p>
+            <button type="submit" class="btn btn-primary" id="loginButton">Access dashboard</button>
+            <a href="/" class="login-back">&larr; Back to website</a>
+        </form>
+    </div>
+
+    <div class="admin-app" id="adminApp" hidden>
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-brand">
+                <img src="/smriti-logo.svg" alt="" id="adminLogo">
+                <div>
+                    <strong id="adminBrandName">SMRITHI</strong>
+                    <span id="adminBrandVersion">2026</span>
+                </div>
+            </div>
+            <nav class="admin-nav" id="adminNav">
+                <button type="button" class="admin-nav-item active" data-tab="overview">
+                    <span class="nav-ico">◈</span><span>Overview</span>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="teams">
+                    <span class="nav-ico">⛨</span><span>Teams</span><em data-count="teams">0</em>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="schedule">
+                    <span class="nav-ico">▤</span><span>Schedule</span><em data-count="fixtures">0</em>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="results">
+                    <span class="nav-ico">★</span><span>Results</span><em data-count="results">0</em>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="sponsors">
+                    <span class="nav-ico">◆</span><span>Sponsors</span><em data-count="sponsors">0</em>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="gallery">
+                    <span class="nav-ico">▧</span><span>Gallery</span><em data-count="gallery">0</em>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="content">
+                    <span class="nav-ico">✎</span><span>Site content</span>
+                </button>
+                <button type="button" class="admin-nav-item" data-tab="security">
+                    <span class="nav-ico">⚿</span><span>Security &amp; backup</span>
+                </button>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <a href="/" target="_blank" rel="noopener" class="btn btn-secondary admin-btn-sm">View website ↗</a>
+                <button type="button" class="btn btn-ghost admin-btn-sm" id="logoutButton">Sign out</button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <button type="button" class="admin-menu-toggle" id="adminMenuToggle" aria-label="Toggle menu">☰</button>
+                <div class="admin-title">
+                    <h1 id="pageTitle">Overview</h1>
+                    <p id="pageSubtitle">Everything on the public site is controlled from here.</p>
+                </div>
+                <div class="admin-topbar-actions">
+                    <span class="admin-saved" id="lastSaved">Synced</span>
+                    <button type="button" class="btn btn-secondary admin-btn-sm" id="refreshButton">Refresh</button>
+                </div>
+            </header>
+
+            <div class="warn-banner" id="securityBanner" hidden></div>
+
+            <section class="admin-panel active" data-panel="overview">
+                <div class="stat-grid" id="statGrid"></div>
+                <div class="admin-columns">
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <h2>Live standings</h2>
+                            <span class="muted">Auto-calculated from results</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table compact">
+                                <thead><tr><th>#</th><th>Team</th><th>1st</th><th>2nd</th><th>3rd</th><th>Pts</th></tr></thead>
+                                <tbody id="overviewLeaderboard"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-head"><h2>Activity log</h2><span class="muted">Latest changes</span></div>
+                        <ul class="activity-list" id="activityList"></ul>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="panel-head"><h2>Upcoming &amp; live fixtures</h2><a href="#" class="link" data-goto-tab="schedule">Manage schedule</a></div>
+                    <div class="table-responsive">
+                        <table class="admin-table compact">
+                            <thead><tr><th>Day</th><th>Event</th><th>Teams</th><th>Time</th><th>Status</th></tr></thead>
+                            <tbody id="overviewFixtures"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="teams">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Participating colleges</h2>
+                            <span class="muted">Teams feed the leaderboard, fixtures and results.</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button type="button" class="btn btn-primary admin-btn-sm" data-action="add-team">+ Add team</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead><tr><th>Logo</th><th>Team</th><th>Short name</th><th>Actions</th></tr></thead>
+                            <tbody id="teamsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="schedule">
+                <div class="admin-columns sidebar-right">
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Days</h2>
+                                <span class="muted">Fest days shown on the events page.</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary admin-btn-sm" data-action="add-day">+ Add day</button>
+                        </div>
+                        <ul class="day-list" id="dayList"></ul>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <div>
+                                <h2 id="fixturePanelTitle">Fixtures</h2>
+                                <span class="muted" id="fixturePanelHint">Select a day to manage its fixtures.</span>
+                            </div>
+                            <button type="button" class="btn btn-primary admin-btn-sm" data-action="add-fixture">+ Add fixture</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead><tr><th>Event</th><th>Match</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="fixturesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="results">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Event results</h2>
+                            <span class="muted">Publishing a result updates the leaderboard instantly.</span>
+                        </div>
+                        <button type="button" class="btn btn-primary admin-btn-sm" data-action="add-result">+ Add result</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead><tr><th>Event</th><th>1st</th><th>2nd</th><th>3rd</th><th>Actions</th></tr></thead>
+                            <tbody id="resultsBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="panel-note" id="pointsSummary"></p>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="sponsors">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Sponsor logos</h2>
+                            <span class="muted">Shown in the carousel on the home and leaderboard pages.</span>
+                        </div>
+                        <button type="button" class="btn btn-primary admin-btn-sm" data-action="add-sponsor">+ Add sponsor</button>
+                    </div>
+                    <div class="sponsor-grid" id="sponsorGrid"></div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="gallery">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Live gallery</h2>
+                            <span class="muted">JPG, PNG, WebP, GIF or AVIF up to 8 MB each. Upload several at once.</span>
+                        </div>
+                        <div class="panel-actions">
+                            <input type="file" id="galleryUpload" accept="image/*" multiple hidden>
+                            <button type="button" class="btn btn-primary admin-btn-sm" data-action="upload-gallery">+ Upload photos</button>
+                        </div>
+                    </div>
+                    <div class="gallery-upload-row">
+                        <label class="field-inline">
+                            <span>Album / group</span>
+                            <input type="text" id="galleryGroupInput" placeholder="e.g. Day 1, Football, Backstage">
+                        </label>
+                    </div>
+                    <div class="admin-gallery" id="adminGalleryGrid"></div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="content">
+                <div class="content-grid" id="contentGrid"></div>
+            </section>
+
+            <section class="admin-panel" data-panel="security">
+                <div class="admin-columns">
+                    <div class="panel-card">
+                        <div class="panel-head"><h2>Admin password</h2></div>
+                        <form id="passwordForm" class="form-stack">
+                            <label class="field"><span>Current password</span><input type="password" id="currentPassword" autocomplete="current-password" required></label>
+                            <label class="field"><span>New password (min 8 characters)</span><input type="password" id="newPassword" autocomplete="new-password" required minlength="8"></label>
+                            <label class="field"><span>Confirm new password</span><input type="password" id="confirmPassword" autocomplete="new-password" required minlength="8"></label>
+                            <button type="submit" class="btn btn-primary admin-btn-sm">Update password</button>
+                        </form>
+                        <p class="panel-note" id="passwordNote"></p>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-head"><h2>Backup &amp; restore</h2></div>
+                        <p class="panel-note">Download a JSON backup of every team, fixture, result, sponsor, photo and content block. Restore it on this or any other deployment.</p>
+                        <div class="panel-actions stacked">
+                            <button type="button" class="btn btn-secondary admin-btn-sm" data-action="export-backup">Download backup</button>
+                            <input type="file" id="importFile" accept="application/json" hidden>
+                            <button type="button" class="btn btn-ghost admin-btn-sm" data-action="import-backup">Restore from backup</button>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-head"><h2>Session</h2></div>
+                        <p class="panel-note">Signed in as administrator. Sessions expire after 7 days of inactivity.</p>
+                        <button type="button" class="btn btn-ghost admin-btn-sm" id="logoutButtonBottom">Sign out</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-root" id="modalRoot"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="/admin.js" defer></script>
+</body>
+</html>
