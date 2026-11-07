@@ -258,6 +258,57 @@ function dayLabelFor(fixture) {
   return day?.label || "";
 }
 
+const MATCH_MINUTES = 120;
+
+function parseClock(value) {
+  const text = String(value || "").trim();
+  const clock = text.match(/^(\d{1,2})[:.](\d{2})\s*(am|pm)?$/i);
+  if (clock) {
+    let hours = Number(clock[1]);
+    const minutes = Number(clock[2]);
+    const suffix = (clock[3] || "").toLowerCase();
+    if (suffix === "pm" && hours < 12) hours += 12;
+    if (suffix === "am" && hours === 12) hours = 0;
+    if (hours > 23 || minutes > 59) return null;
+    return hours * 60 + minutes;
+  }
+  const loose = text.match(/^(\d{1,2})\s*(am|pm)$/i);
+  if (loose) {
+    let hours = Number(loose[1]);
+    if (loose[2].toLowerCase() === "pm" && hours < 12) hours += 12;
+    if (loose[2].toLowerCase() === "am" && hours === 12) hours = 0;
+    return hours * 60;
+  }
+  return null;
+}
+
+function fixtureTiming(fixture) {
+  const day = (state.data?.days || []).find((item) => item.id === fixture.day_id);
+  const clock = parseClock(fixture.time);
+  const date = day?.date ? new Date(day.date) : null;
+  if (!date || Number.isNaN(date.getTime()) || clock === null) {
+    return { start: null, end: null };
+  }
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, clock, 0, 0);
+  return { start, end: new Date(start.getTime() + MATCH_MINUTES * 60 * 1000) };
+}
+
+/**
+ * A match is live only while its clock window is open. Once its day has passed
+ * it counts as finished, even if the dashboard still says "live".
+ */
+function fixturePhase(fixture, now = new Date()) {
+  if (fixture.status === "finished") return "finished";
+  const { start, end } = fixtureTiming(fixture);
+  if (start && end) {
+    if (now >= start && now <= end) return "live";
+    if (now > end) return "finished";
+  }
+  if (fixture.status === "live") return "live";
+  if (fixture.status === "finished") return "finished";
+  return "upcoming";
+}
+
 function renderTicker(settings) {
   const container = $("#liveBannerContainer");
   const track = $("#liveBannerTrack");
@@ -271,11 +322,18 @@ function renderTicker(settings) {
   const fixtures = (state.data?.fixtures || []).filter(
     (fixture) => fixture.team_one_name || fixture.team_two_name,
   );
-  const live = fixtures.filter((fixture) => fixture.status === "live");
+  const now = new Date();
+  const startOf = (fixture) => fixtureTiming(fixture).start?.getTime() ?? Number.POSITIVE_INFINITY;
+
+  const live = fixtures
+    .filter((fixture) => fixturePhase(fixture, now) === "live")
+    .sort((a, b) => startOf(a) - startOf(b) || (a.sort_order || 0) - (b.sort_order || 0));
   const upcoming = fixtures
-    .filter((fixture) => fixture.status === "upcoming")
-    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-  const items = [...live, ...upcoming].slice(0, 10);
+    .filter((fixture) => fixturePhase(fixture, now) === "upcoming")
+    .sort((a, b) => startOf(a) - startOf(b) || (a.sort_order || 0) - (b.sort_order || 0));
+
+  const items = live.length ? live : upcoming.slice(0, 8);
+  const isLiveMode = live.length > 0;
 
   const parts = [];
   if (settings.ticker?.enabled && settings.ticker.text) {
@@ -287,11 +345,12 @@ function renderTicker(settings) {
   }
   for (const fixture of items) {
     const teams = [fixture.team_one_name, fixture.team_two_name].filter(Boolean).join(" vs ");
+    const isLive = fixturePhase(fixture, now) === "live";
     parts.push(`<div class="banner-item" data-goto="schedule">
         <div class="banner-event-info">
           <span class="banner-day">${escapeHTML(dayLabelFor(fixture) || "FIXTURE")}</span>
           <span class="banner-title">${escapeHTML(fixture.event_name || "Match")}${
-            fixture.status === "live" ? '<span class="banner-live-tag">LIVE</span>' : ""
+            isLive ? '<span class="banner-live-tag">LIVE</span>' : ""
           }</span>
           <span class="banner-teams">${escapeHTML(teams || "Teams to be announced")}</span>
         </div>
@@ -311,7 +370,8 @@ function renderTicker(settings) {
     item.addEventListener("click", () => showSection(item.dataset.goto));
   });
   const label = $("#liveBannerLabel");
-  if (label) label.textContent = settings.banner?.label?.trim() || "LIVE NOW";
+  if (label) label.textContent = isLiveMode ? (settings.banner?.label?.trim() || "LIVE NOW") : "UP NEXT";
+  container.classList.toggle("is-live", isLiveMode);
   container.style.display = "block";
 }
 
@@ -566,18 +626,109 @@ function renderSchedule() {
   });
 }
 
+function renderResultsRelated(query, needle) {
+  const box = $("#resultsRelated");
+  if (!box) return;
+  if (!needle) {
+    box.innerHTML = "";
+    box.style.display = "none";
+    return;
+  }
+
+  const fixtures = (state.data?.fixtures || [])
+    .filter((fixture) =>
+      [fixture.event_name, fixture.team_one_name, fixture.team_two_name, fixture.round]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(needle),
+    )
+    .slice(0, 6);
+  const teams = (state.data?.teams || [])
+    .filter((team) => String(team.name || "").toLowerCase().includes(needle))
+    .slice(0, 6);
+
+  const blocks = [];
+  if (fixtures.length) {
+    blocks.push(`<div class="related-block"><h4>Related matches</h4>${fixtures
+      .map((fixture) => {
+        const teamsText =
+          [fixture.team_one_name, fixture.team_two_name].filter(Boolean).join(" vs ") ||
+          "Teams to be announced";
+        return `<button type="button" class="related-row" data-goto="schedule">
+          <span><strong>${escapeHTML(fixture.event_name || "Match")}</strong> ${escapeHTML(teamsText)}</span>
+          <em>${escapeHTML(fixturePhase(fixture) === "live" ? "LIVE" : fixture.status === "finished" ? "Finished" : fixture.time || "Upcoming")}</em>
+        </button>`;
+      })
+      .join("")}</div>`);
+  }
+  if (teams.length) {
+    blocks.push(`<div class="related-block"><h4>Teams</h4>${teams
+      .map(
+        (team) => `<button type="button" class="related-row" data-goto="leaderboard">
+          <span>${escapeHTML(team.name)}</span><em>See standings</em>
+        </button>`,
+      )
+      .join("")}</div>`);
+  }
+
+  if (!blocks.length) {
+    box.innerHTML = "";
+    box.style.display = "none";
+    return;
+  }
+
+  box.innerHTML = `<div class="glass-panel related-panel">
+    <p class="related-hint">Related to “${escapeHTML(query)}”</p>
+    ${blocks.join("")}
+  </div>`;
+  box.style.display = "";
+  box.querySelectorAll("[data-goto]").forEach((item) => {
+    item.addEventListener("click", () => showSection(item.dataset.goto));
+  });
+}
+
 function renderResults() {
   const grid = $("#resultsGrid");
+  const count = $("#resultsSearchCount");
+  const query = (state.resultsQuery || "").trim();
+  const needle = query.toLowerCase();
   const results = (state.data?.results || []).slice().sort((a, b) => a.name.localeCompare(b.name));
+  const searchText = (result) =>
+    [
+      result.name,
+      teamName(result.first_team_id),
+      teamName(result.second_team_id),
+      teamName(result.third_team_id),
+      result.note,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  const visible = needle ? results.filter((result) => searchText(result).includes(needle)) : results;
+
+  renderResultsRelated(query, needle);
 
   if (!results.length) {
     grid.innerHTML =
       '<div class="glass-panel placeholder-panel"><p>Results will be updated once events are completed.</p></div>';
+    if (count) count.textContent = "";
+    return;
+  }
+
+  if (count) {
+    count.textContent = needle
+      ? `${visible.length} of ${results.length} results`
+      : `${results.length} ${results.length === 1 ? "event" : "events"}`;
+  }
+
+  if (!visible.length) {
+    grid.innerHTML = `<div class="empty-state"><strong>No results for “${escapeHTML(query)}”</strong>Try a team name, a sport, or clear the search.</div>`;
     return;
   }
 
   grid.innerHTML = "";
-  for (const result of results) {
+  for (const result of visible) {
     const podium = [
       { medal: "🥇", team: teamName(result.first_team_id), cls: "" },
       { medal: "🥈", team: teamName(result.second_team_id), cls: "result-medal-secondary" },
@@ -594,8 +745,8 @@ function renderResults() {
         </div>
         <span class="expand-icon">&#9662;</span>
       </div>
-      <div class="event-card-body">
-        <div class="event-results-list">
+      <div class="event-card-body${needle ? " is-open" : ""}">
+        <div class="event-results-list${needle ? " show" : ""}">
           ${
             podium.length
               ? podium
@@ -761,6 +912,19 @@ function renderAbout(settings) {
   $("#aboutHighlights").innerHTML = (about.highlights || [])
     .map((item) => `<li>${escapeHTML(item)}</li>`)
     .join("");
+  setVisible($("#aboutStats"), (about.stats || []).length > 0);
+  setVisible(
+    $("#aboutHeading")?.closest(".about-hero-card"),
+    Boolean(about.heading || about.intro || (about.stats || []).length),
+  );
+  setVisible(
+    $("#aboutHostTitle")?.closest(".about-copy-card"),
+    Boolean(about.hostTitle || (about.hostParagraphs || []).length),
+  );
+  setVisible(
+    $("#aboutHighlights")?.closest(".about-list-card"),
+    (about.highlights || []).length > 0,
+  );
   $("#aboutSectionSubtitle").textContent = settings.hero?.title || "Intercollegiate Sports Fest";
 
   // Footer admin shortcut
@@ -883,20 +1047,31 @@ function renderRegistration(settings) {
   if (!grid) return;
   const games = settings.games || [];
   grid.innerHTML = games
-    .map(
-      (game) => `<div class="glass-panel reg-card">
+    .map((game) => {
+      const rows = [];
+      if (game.fee) {
+        rows.push(
+          `<div class="reg-row"><span>Entry fee</span><strong>${escapeHTML(game.fee)}</strong></div>`,
+        );
+      }
+      if (game.prize) {
+        rows.push(
+          `<div class="reg-row"><span>Prize pool</span><strong>${escapeHTML(game.prize)}</strong></div>`,
+        );
+      }
+      if (!rows.length && !game.link) return "";
+      return `<div class="glass-panel reg-card">
         <h3 class="event-title">${escapeHTML(game.name)}</h3>
-        <div class="reg-row"><span>Entry fee</span><strong>${escapeHTML(game.fee || "—")}</strong></div>
-        <div class="reg-row"><span>Prize pool</span><strong>${escapeHTML(game.prize || "—")}</strong></div>
+        ${rows.join("")}
         ${
           game.link
             ? `<a class="btn btn-primary" href="${escapeHTML(game.link)}" target="_blank" rel="noopener">Register</a>`
             : ""
         }
-      </div>`,
-    )
+      </div>`;
+    })
     .join("");
-  setVisible(document.getElementById("registration"), games.length > 0);
+  setVisible(document.getElementById("registration"), grid.innerHTML.trim().length > 0);
 }
 
 function renderCommittee(settings) {
@@ -951,7 +1126,7 @@ function syncVisibility() {
     gallery: (data.gallery || []).length > 0,
     about: hasAbout,
     sponsors: (data.sponsors || []).length > 0,
-    registration: (settings.games || []).length > 0,
+    registration: (settings.games || []).some((game) => game.fee || game.prize || game.link),
     committee: (settings.contacts || []).length > 0,
   };
 
@@ -1015,11 +1190,22 @@ async function loadSite({ quiet = false } = {}) {
   }
 }
 
+function initResultsSearch() {
+  const input = $("#resultsSearch");
+  if (!input) return;
+  input.value = state.resultsQuery || "";
+  input.addEventListener("input", () => {
+    state.resultsQuery = input.value;
+    renderResults();
+  });
+}
+
 function init() {
   initTheme();
   initNavigation();
   initMobileMenu();
   initLightbox();
+  initResultsSearch();
   loadSite();
   setInterval(() => {
     if (document.visibilityState === "visible") loadSite({ quiet: true });
