@@ -55,6 +55,9 @@
                 <button type="button" class="admin-nav-item" data-tab="gallery">
                     <span class="nav-ico">▧</span><span>Gallery</span><em data-count="gallery">0</em>
                 </button>
+                <button type="button" class="admin-nav-item" data-tab="registration">
+                    <span class="nav-ico">₹</span><span>Registration</span><em data-count="games">0</em>
+                </button>
                 <button type="button" class="admin-nav-item" data-tab="content">
                     <span class="nav-ico">✎</span><span>Site content</span>
                 </button>
@@ -215,6 +218,25 @@
                         </label>
                     </div>
                     <div class="admin-gallery" id="adminGalleryGrid"></div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-panel="registration">
+                <div class="panel-card">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Registration &amp; prize pool</h2>
+                            <span class="muted">One card per game on the public Registration page.</span>
+                        </div>
+                        <button type="button" class="btn btn-primary admin-btn-sm" data-action="add-game">+ Add game</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead><tr><th>Game</th><th>Entry fee</th><th>Prize pool</th><th>Form link</th><th>Actions</th></tr></thead>
+                            <tbody id="gamesBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="panel-note">Fee or prize left blank is hidden on the site. An entry with no fee, no prize and no link is skipped entirely, and clearing every entry hides the Registration section.</p>
                 </div>
             </section>
 

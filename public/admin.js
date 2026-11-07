@@ -162,6 +162,7 @@ function renderAll() {
     results: data.results.length,
     sponsors: data.sponsors.length,
     gallery: data.gallery.length,
+    games: (data.settings.games || []).length,
   };
   for (const [key, value] of Object.entries(counts)) {
     $$(`[data-count="${key}"]`).forEach((node) => (node.textContent = value));
@@ -186,6 +187,7 @@ function renderAll() {
   renderResults();
   renderSponsors();
   renderGallery();
+  renderRegistrationAdmin();
   renderContent();
   renderSecurity();
 }
@@ -397,6 +399,83 @@ function renderScheduleAdmin() {
     button.addEventListener("click", () => removeRecord("fixtures", button.dataset.deleteFixture, "fixture")),
   );
 }
+
+/* --------------------------- registration --------------------------- */
+
+function renderRegistrationAdmin() {
+  const games = state.data.settings.games || [];
+  const body = $("#gamesBody");
+  if (!body) return;
+
+  body.innerHTML = games.length
+    ? games
+        .map(
+          (game, index) => `<tr>
+            <td><strong>${esc(game.name || "Untitled game")}</strong></td>
+            <td>${game.fee ? esc(game.fee) : '<span class="muted">hidden</span>'}</td>
+            <td>${game.prize ? esc(game.prize) : '<span class="muted">hidden</span>'}</td>
+            <td>${
+              game.link
+                ? `<a class="link" href="${esc(game.link)}" target="_blank" rel="noopener">Open form ↗</a>`
+                : '<span class="muted">—</span>'
+            }</td>
+            <td>
+              <div class="row-actions">
+                <button type="button" class="icon-btn" data-edit-game="${index}">Edit</button>
+                <button type="button" class="icon-btn danger" data-delete-game="${index}">Delete</button>
+              </div>
+            </td>
+          </tr>`,
+        )
+        .join("")
+    : '<tr class="empty-row"><td colspan="5">No registration entries yet. Add a game to start collecting fees.</td></tr>';
+
+  $$("[data-edit-game]").forEach((button) =>
+    button.addEventListener("click", () => editGame(Number(button.dataset.editGame))),
+  );
+  $$("[data-delete-game]").forEach((button) =>
+    button.addEventListener("click", () => removeGame(Number(button.dataset.deleteGame))),
+  );
+}
+
+function saveGames(games) {
+  return api("/api/admin/settings", { method: "PUT", body: { games } });
+}
+
+function editGame(index) {
+  const games = (state.data.settings.games || []).map((game) => ({ ...game }));
+  const game = Number.isInteger(index) && index >= 0 ? games[index] : null;
+  openForm({
+    title: game ? "Edit registration entry" : "Add registration entry",
+    subtitle: "Each entry becomes a card in the public Registration section.",
+    values: game || {},
+    fields: [
+      { name: "name", label: "Game / sport", placeholder: "Football", required: true, full: true },
+      { name: "fee", label: "Entry fee", placeholder: "₹100 per player" },
+      { name: "prize", label: "Prize pool", placeholder: "₹10,000 for the winners" },
+      { name: "link", label: "Registration form link", placeholder: "https://forms.gle/...", full: true },
+    ],
+    submitLabel: game ? "Save entry" : "Add entry",
+    onSubmit: async (values) => {
+      if (game) games[index] = { ...game, ...values };
+      else games.push(values);
+      await saveGames(games);
+    },
+  });
+}
+
+async function removeGame(index) {
+  const games = (state.data.settings.games || []).map((game) => ({ ...game }));
+  const ok = await confirmDialog(
+    `Delete ${games[index]?.name || "this entry"}?`,
+    "It will be removed from the public registration page.",
+  );
+  if (!ok) return;
+  games.splice(index, 1);
+  await run(() => saveGames(games), "Registration entry deleted");
+}
+
+/* ------------------------------ schedule ---------------------------- */
 
 function editDay(id) {
   const day = state.data.days.find((item) => item.id === id);
@@ -1406,6 +1485,7 @@ function setTab(tab) {
     results: ["Results", "Publish podiums and keep the leaderboard accurate."],
     sponsors: ["Sponsors", "Logo carousel shown on the public site."],
     gallery: ["Gallery", "Upload and curate live fest photos."],
+    registration: ["Registration", "Entry fees, prize pools and registration links per game."],
     content: ["Site content", "Every headline, paragraph, contact and colour on the site."],
     security: ["Security & backup", "Password and full content backups."],
   };
@@ -1439,6 +1519,7 @@ $("[data-action='add-fixture']").addEventListener("click", () => {
 });
 $("[data-action='add-result']").addEventListener("click", () => editResult());
 $("[data-action='add-sponsor']").addEventListener("click", () => editSponsor());
+$("[data-action='add-game']").addEventListener("click", () => editGame(-1));
 
 $("[data-action='upload-gallery']").addEventListener("click", () => $("#galleryUpload").click());
 $("#galleryUpload").addEventListener("change", async (event) => {
